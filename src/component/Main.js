@@ -1,51 +1,37 @@
 import React from "react";
 
-function handleEditAvatarClick() {
-  document
-    .querySelector(".popup_type_change-avatar")
-    .classList.add("popup_opened");
-}
 
-function handleEditProfileClick() {
-  document.querySelector(".popup_type_profile").classList.add("popup_opened");
-}
-
-function handleAddPlaceClick() {
-  document
-    .querySelector(".popup_type_new-element")
-    .classList.add("popup_opened");
-}
-
-function Main() {
+function Main(props) {
+    const {onEditProfile, onAddPlace, onEditAvatar, userData} = props;
   return (
     <main>
       <section className="profile">
         <div className="profile__avatar-container">
           <img
-            src="<%=require('./images/blankperson.png')%>"
+            src={userData.avatar}
             alt="Аватар пользователя"
             className="profile__avatar"
           />
           <button
-            onClick={handleEditAvatarClick}
+            onClick={onEditAvatar}
             className="profile__change-avatar"
           ></button>
         </div>
         <div className="profile__info">
           <div className="profile__name-block">
-            <h1 className="profile__name">profile name</h1>
+            <h1 className="profile__name">{userData.name}</h1>
             <button
-              onClick={handleEditProfileClick}
+              onClick={onEditProfile}
               aria-label="Редактировать профиль"
               type="button"
               className="profile__edit-btn transparent-btn"
             ></button>
           </div>
 
-          <p className="profile__description">profile bio</p>
+          <p className="profile__description">{userData.about}</p>
         </div>
         <button
-          onClick={handleAddPlaceClick}
+          onClick={onAddPlace}
           aria-label="Добавить запись"
           type="button"
           className="profile__post-add transparent-btn"
