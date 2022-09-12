@@ -4,10 +4,9 @@ import Main from "./Main";
 import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
-import api from "../utils/api";
 
 function App() {
-  //переменные состояния и обработчики событий попапов
+
   const [isPopupAvatarOpened, setPopupAvatarStatus] = React.useState(false);
   function handleEditAvatarClick() {
     setPopupAvatarStatus(true);
@@ -20,58 +19,31 @@ function App() {
   function handleAddPlaceClick() {
     setPopupAddPlaceStatus(true);
   }
+  const [isPopupImageOpened, setPopupImageStatus] = React.useState(false);
+
   function closeAllPopups() {
     setPopupAvatarStatus(false);
     setPopupProfileStatus(false);
     setPopupAddPlaceStatus(false);
+    setPopupImageStatus(false);
   }
 
-  //состояние данных из апи
-
-  const [userData, setUserData] = React.useState({
-    name: "name",
-    about: "description",
-    avatar: "#",
-  });
-  React.useEffect(() => {
-    api
-      .getUserInfo()
-      .then((importedData) => {
-        console.log(importedData);
-        setUserData(importedData);
-      })
-      .catch((err) => {
-        console.log("Ошибка API при обновлении данных пользователя!", err);
-      });
-  });
+  const [selectedCard, setSelectedCard] = React.useState({});
+  function handleCardClick(card) {
+    setSelectedCard(card);
+    setPopupImageStatus(true);
+  }
 
   return (
-    <body className="page">
+    <div className="page">
       <Header />
       <Main
         onEditProfile={handleEditProfileClick}
         onAddPlace={handleAddPlaceClick}
         onEditAvatar={handleEditAvatarClick}
-        userData={userData}
+        onCardClick={handleCardClick}
       />
       <Footer />
-      <template id="element-template">
-        <li className="element">
-          <button className="element__delete-button transparent-btn"></button>
-          <img src="#" alt="" className="element__image" />
-          <div className="element__info">
-            <h2 className="element__title"></h2>
-            <div className="element__like-container">
-              <button
-                aria-label="Нравится"
-                type="button"
-                className="element__like transparent-btn transparent-btn_opacity_medium"
-              ></button>
-              <p className="element__like-counter">1</p>
-            </div>
-          </div>
-        </li>
-      </template>
 
       <PopupWithForm
         name="profile"
@@ -156,8 +128,15 @@ function App() {
         onClose={closeAllPopups}
       ></PopupWithForm>
 
-      <ImagePopup />
-    </body>
+      <ImagePopup
+        card={selectedCard}
+        isOpen={isPopupImageOpened}
+        onClose={() => {
+          closeAllPopups();
+          setSelectedCard({});
+        }}
+      ></ImagePopup>
+    </div>
   );
 }
 

@@ -1,8 +1,30 @@
 import React from "react";
-
+import api from "../utils/api";
+import Card from "./Card";
 
 function Main(props) {
-    const {onEditProfile, onAddPlace, onEditAvatar, userData} = props;
+  const { onEditProfile, onAddPlace, onEditAvatar, onCardClick } = props;
+
+  //стейт данных пользователя
+  const [userData, setUserData] = React.useState({
+    name: "name",
+    about: "description",
+    avatar: "#",
+  });
+  //стейт карточек
+  const [cards, setCards] = React.useState([]);
+
+  //эффекты
+  React.useEffect(() => {
+    Promise.all([api.getUserInfo(), api.getInitialCards()])
+      .then(([userData, initialCards]) => {
+        setUserData(userData);
+        setCards(initialCards);
+      })
+      .catch((err) => {
+        console.log("Ошибка API при загрузке первоначальных данных!", err);
+      });
+  }, []);
   return (
     <main>
       <section className="profile">
@@ -38,7 +60,11 @@ function Main(props) {
         ></button>
       </section>
       <section className="elements">
-        <ul className="elements__list"></ul>
+        <ul className="elements__list">
+          {cards.map((cardData) => (
+            <Card key={cardData._id} cardData={cardData} onCardClick={onCardClick} />
+          ))}
+        </ul>
       </section>
     </main>
   );
