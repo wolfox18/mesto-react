@@ -6,32 +6,33 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 
 function App() {
+  const [isPopupAvatarOpened, setIsPopupAvatarOpen] = React.useState(false);
+  const [isPopupProfileOpened, setIsPopupProfileOpen] = React.useState(false);
+  const [isPopupAddPlaceOpened, setIsPopupAddPlaceOpened] =
+    React.useState(false);
+  const [isPopupImageOpened, setIsPopupImageOpened] = React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState({});
 
-  const [isPopupAvatarOpened, setPopupAvatarStatus] = React.useState(false);
   function handleEditAvatarClick() {
-    setPopupAvatarStatus(true);
+    setIsPopupAvatarOpen(true);
   }
-  const [isPopupProfileOpened, setPopupProfileStatus] = React.useState(false);
   function handleEditProfileClick() {
-    setPopupProfileStatus(true);
+    setIsPopupProfileOpen(true);
   }
-  const [isPopupAddPlaceOpened, setPopupAddPlaceStatus] = React.useState(false);
   function handleAddPlaceClick() {
-    setPopupAddPlaceStatus(true);
+    setIsPopupAddPlaceOpened(true);
   }
-  const [isPopupImageOpened, setPopupImageStatus] = React.useState(false);
 
   function closeAllPopups() {
-    setPopupAvatarStatus(false);
-    setPopupProfileStatus(false);
-    setPopupAddPlaceStatus(false);
-    setPopupImageStatus(false);
+    setIsPopupAvatarOpen(false);
+    setIsPopupProfileOpen(false);
+    setIsPopupAddPlaceOpened(false);
+    setIsPopupImageOpened(false);
   }
 
-  const [selectedCard, setSelectedCard] = React.useState({});
   function handleCardClick(card) {
     setSelectedCard(card);
-    setPopupImageStatus(true);
+    setIsPopupImageOpened(true);
   }
 
   return (
@@ -50,6 +51,7 @@ function App() {
         title="Редактировать профиль"
         isOpen={isPopupProfileOpened}
         onClose={closeAllPopups}
+        buttonText="Сохранить"
       >
         <input
           name="name"
@@ -81,6 +83,7 @@ function App() {
         title="Новое место"
         isOpen={isPopupAddPlaceOpened}
         onClose={closeAllPopups}
+        buttonText="Создать"
       >
         <input
           name="name"
@@ -110,6 +113,7 @@ function App() {
         title="Обновить аватар"
         isOpen={isPopupAvatarOpened}
         onClose={closeAllPopups}
+        buttonText="Сохранить"
       >
         <input
           name="link"
@@ -126,6 +130,7 @@ function App() {
         name="confirm"
         title="Вы уверены?"
         onClose={closeAllPopups}
+        buttonText="Да"
       ></PopupWithForm>
 
       <ImagePopup
@@ -135,7 +140,7 @@ function App() {
           closeAllPopups();
           setSelectedCard({});
         }}
-      ></ImagePopup>
+      />
     </div>
   );
 }

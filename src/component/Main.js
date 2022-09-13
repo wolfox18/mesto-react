@@ -25,6 +25,7 @@ function Main(props) {
         console.log("Ошибка API при загрузке первоначальных данных!", err);
       });
   }, []);
+  
   return (
     <main>
       <section className="profile">
@@ -62,7 +63,11 @@ function Main(props) {
       <section className="elements">
         <ul className="elements__list">
           {cards.map((cardData) => (
-            <Card key={cardData._id} cardData={cardData} onCardClick={onCardClick} />
+            <Card
+              key={cardData._id}
+              cardData={cardData}
+              onCardClick={onCardClick}
+            />
           ))}
         </ul>
       </section>

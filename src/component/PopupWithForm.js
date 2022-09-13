@@ -1,7 +1,7 @@
 import React from "react";
 
 function PopupWithForm(props) {
-  const { name, title, children, isOpen, onClose } = props;
+  const { name, title, children, isOpen, onClose, buttonText } = props;
   return (
     <div className={`popup popup_type_${name} ${isOpen ? "popup_opened" : ""}`}>
       <div className="popup__container popup__container_type_form">
@@ -17,11 +17,11 @@ function PopupWithForm(props) {
           {children}
 
           <button
-            aria-label="Сохранить"
+            aria-label={buttonText}
             type="submit"
             className="popup__save-btn transparent-btn transparent-btn_opacity_hard"
           >
-            Сохранить
+            {buttonText}
           </button>
         </form>
       </div>
