@@ -7,7 +7,7 @@ class Api {
     if (res.ok) {
       return res.json();
     }
-    throw new Error("Ошибка внутри API!");
+    throw new Error("Ошибка внутри API!" + res);
   }
   
   getInitialCards() {
@@ -60,6 +60,9 @@ class Api {
         avatar: url
       })
     }).then(this._handleResponse);
+  }
+  changeLikeCardStatus(cardId, isSet){
+    return (isSet ? this.addLike(cardId) : this.deleteLike(cardId));
   }
 }
 
