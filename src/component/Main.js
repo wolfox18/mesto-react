@@ -1,38 +1,18 @@
 import React from "react";
-import api from "../utils/api";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function Main(props) {
-  const { onEditProfile, onAddPlace, onEditAvatar, onCardClick } = props;
-
-  const [cards, setCards] = React.useState([]);
+  const { onEditProfile, onAddPlace, onEditAvatar, onCardClick, cards, onCardLike, onCardDelete } = props;
 
   const currentUser = React.useContext(CurrentUserContext);
 
-  React.useEffect(() => {
-    Promise.all([api.getInitialCards()])
-      .then(([initialCards]) => {
-        setCards(initialCards);
-      })
-      .catch((err) => {
-        console.log("Ошибка API при загрузке первоначальных данных!", err);
-      });
-  }, []);
-
-  function handleCardLike(card) {
-    console.log("handleCardLike started");
-    // const isLiked = card.likes.some((user) => user._id === currentUser._id);
-    // api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-    //   setCards(cards.map((oldCard) => (oldCard._id === card._id ? newCard : oldCard)));
-    // });
+  function handleCardLike(card){
+    onCardLike(card);
   }
 
-  function handleCardDelete(card) {
-    console.log("handleCardDelete started");
-    // api.deleteCard(card._id).then(() => {
-    //   setCards(cards.filter((oldCard) => (oldCard._id !== card._id)));
-    // });
+  function handleCardDelete(card){
+    onCardDelete(card);
   }
 
   return (

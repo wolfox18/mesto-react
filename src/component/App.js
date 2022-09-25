@@ -6,6 +6,9 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import api from "../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
 
 function App() {
   const [isPopupAvatarOpened, setIsPopupAvatarOpen] = React.useState(false);
@@ -16,6 +19,18 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState({});
 
   const [currentUser, setCurrentUser] = React.useState({});
+
+  const [cards, setCards] = React.useState([]);
+
+  React.useEffect(() => {
+    Promise.all([api.getInitialCards()])
+      .then(([initialCards]) => {
+        setCards(initialCards);
+      })
+      .catch((err) => {
+        console.log("Ошибка API при загрузке первоначальных данных!", err);
+      });
+  }, []);
 
   React.useEffect(() => {
     api
@@ -28,10 +43,26 @@ function App() {
       });
   }, []);
 
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((user) => user._id === currentUser._id);
+    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+      setCards(
+        cards.map((oldCard) => (oldCard._id === card._id ? newCard : oldCard))
+      );
+    });
+  }
+
+  function handleCardDelete(card) {
+    api.deleteCard(card._id).then(() => {
+      setCards(cards.filter((oldCard) => oldCard._id !== card._id));
+    });
+  }
+
   function handleEditAvatarClick() {
     setIsPopupAvatarOpen(true);
   }
   function handleEditProfileClick() {
+    console.log("пышь");
     setIsPopupProfileOpen(true);
   }
   function handleAddPlaceClick() {
@@ -48,6 +79,49 @@ function App() {
     setIsPopupImageOpened(true);
   }
 
+  function handeUpdateUser(user) {
+    api
+      .patchUserInfo(user)
+      .then((userData) => {
+        setCurrentUser(userData);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log("Ошибка API при обновлении данных пользователя!", err);
+      });
+  }
+
+  function handleUpdateAvatar(url) {
+    //костьль с переписанием объекта, надо подумать и переделать....
+    api
+      .changeAvatar(url)
+      .then(() => {
+        setCurrentUser({
+          name: currentUser.name,
+          about: currentUser.about,
+          _id: currentUser._id,
+          cohort: currentUser.cohort,
+          avatar: url,
+        });
+      })
+      .catch((err) => {
+        console.log("Ошибка при обновлении аватара: ", err);
+      });
+    closeAllPopups();
+  }
+
+  function handleAddPlaceSubmit(cardData) {
+    api
+      .postNewCard(cardData)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+      })
+      .catch((err) => {
+        console.log("Ошибка при обновлении аватара: ", err);
+      });
+      closeAllPopups();
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
@@ -57,89 +131,27 @@ function App() {
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
           onCardClick={handleCardClick}
+          cards={cards}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete}
         />
         <Footer />
 
-        <PopupWithForm
-          name="profile"
-          title="Редактировать профиль"
+        <EditProfilePopup>
           isOpen={isPopupProfileOpened}
           onClose={closeAllPopups}
-          buttonText="Сохранить"
-        >
-          <input
-            name="name"
-            required
-            placeholder="Имя"
-            type="text"
-            id="name"
-            value="Жак-Ив Кусто"
-            minLength="2"
-            maxLength="40"
-            className="popup__input popup__input_type_name"
-          />
-          <span className="popup__error-message name-error"></span>
-          <input
-            name="about"
-            required
-            placeholder="Информация"
-            type="text"
-            id="bio"
-            value="Исследователь океана"
-            minLength="2"
-            maxLength="200"
-            className="popup__input popup__input_type_description"
-          />
-          <span className="popup__error-message bio-error"></span>
-        </PopupWithForm>
-        <PopupWithForm
-          name="new-element"
-          title="Новое место"
+          onUpdateUser={handeUpdateUser}
+        </EditProfilePopup>
+        <AddPlacePopup
           isOpen={isPopupAddPlaceOpened}
           onClose={closeAllPopups}
-          buttonText="Создать"
-        >
-          <input
-            name="name"
-            required
-            placeholder="Название"
-            type="text"
-            id="place"
-            value=""
-            minLength="2"
-            maxLength="30"
-            className="popup__input popup__input_type_place"
-          />
-          <span className="popup__error-message place-error"></span>
-          <input
-            name="link"
-            required
-            placeholder="Ссылка на картинку"
-            id="url"
-            type="url"
-            value=""
-            className="popup__input popup__input_type_url"
-          />
-          <span className="popup__error-message url-error"></span>
-        </PopupWithForm>
-        <PopupWithForm
-          name="change-avatar"
-          title="Обновить аватар"
+          onAddCard={handleAddPlaceSubmit}
+        />
+        <EditAvatarPopup
           isOpen={isPopupAvatarOpened}
           onClose={closeAllPopups}
-          buttonText="Сохранить"
-        >
-          <input
-            name="link"
-            required
-            placeholder="Ссылка на аватар"
-            id="avatar-url"
-            type="url"
-            value=""
-            className="popup__input popup__input_type_url"
-          />
-          <span className="popup__error-message avatar-url-error"></span>
-        </PopupWithForm>
+          onUpdateAvatar={handleUpdateAvatar}
+        />
         <PopupWithForm
           name="confirm"
           title="Вы уверены?"
