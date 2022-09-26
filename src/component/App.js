@@ -62,7 +62,6 @@ function App() {
     setIsPopupAvatarOpen(true);
   }
   function handleEditProfileClick() {
-    console.log("пышь");
     setIsPopupProfileOpen(true);
   }
   function handleAddPlaceClick() {
@@ -92,7 +91,6 @@ function App() {
   }
 
   function handleUpdateAvatar(url) {
-    //костьль с переписанием объекта, надо подумать и переделать....
     api
       .changeAvatar(url)
       .then(() => {
@@ -119,7 +117,7 @@ function App() {
       .catch((err) => {
         console.log("Ошибка при обновлении аватара: ", err);
       });
-      closeAllPopups();
+    closeAllPopups();
   }
 
   return (
@@ -137,11 +135,11 @@ function App() {
         />
         <Footer />
 
-        <EditProfilePopup>
+        <EditProfilePopup
           isOpen={isPopupProfileOpened}
           onClose={closeAllPopups}
           onUpdateUser={handeUpdateUser}
-        </EditProfilePopup>
+        ></EditProfilePopup>
         <AddPlacePopup
           isOpen={isPopupAddPlaceOpened}
           onClose={closeAllPopups}
