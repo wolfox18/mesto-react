@@ -46,7 +46,7 @@ function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some((user) => user._id === currentUser._id);
     api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-      setCards(
+      setCards((cards) =>
         cards.map((oldCard) => (oldCard._id === card._id ? newCard : oldCard))
       );
     });
@@ -54,7 +54,7 @@ function App() {
 
   function handleCardDelete(card) {
     api.deleteCard(card._id).then(() => {
-      setCards(cards.filter((oldCard) => oldCard._id !== card._id));
+      setCards((cards) => cards.filter((oldCard) => oldCard._id !== card._id));
     });
   }
 
@@ -101,11 +101,11 @@ function App() {
           cohort: currentUser.cohort,
           avatar: url,
         });
+        closeAllPopups();
       })
       .catch((err) => {
         console.log("Ошибка при обновлении аватара: ", err);
       });
-    closeAllPopups();
   }
 
   function handleAddPlaceSubmit(cardData) {
@@ -113,11 +113,11 @@ function App() {
       .postNewCard(cardData)
       .then((newCard) => {
         setCards([newCard, ...cards]);
+        closeAllPopups();
       })
       .catch((err) => {
         console.log("Ошибка при обновлении аватара: ", err);
       });
-    closeAllPopups();
   }
 
   return (
