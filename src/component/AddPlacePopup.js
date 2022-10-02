@@ -7,16 +7,21 @@ function AddPlacePopup({ isOpen, onClose, onAddCard }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onAddCard({name, link});
+    onAddCard({ name, link });
   }
 
-  function handeNameChange(e){
+  function handeNameChange(e) {
     setName(e.target.value);
   }
 
-  function handeLinkChange(e){
+  function handeLinkChange(e) {
     setLink(e.target.value);
   }
+
+  React.useEffect(() => {
+    setLink("");
+    setName("");
+  }, [isOpen]);
 
   return (
     <PopupWithForm
